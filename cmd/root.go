@@ -16,6 +16,8 @@ import (
 var cfgFile string
 var host string
 var port int
+var username string
+var password string
 
 // RootCmd is the base command
 var RootCmd = &cobra.Command{
@@ -24,7 +26,7 @@ var RootCmd = &cobra.Command{
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
 		log.Output(1, fmt.Sprintf("The Trigger is working on instance %s:%d\n", viper.GetString("network.host"), viper.GetInt("network.port")))
-		service.Start(viper.GetString("network.host"), viper.GetInt("network.port"), viper.GetInt("actions.secondsOfActivity"), viper.GetInt("actions.secondsOfInactivity"), viper.GetString("actions.actionLevel"))
+		service.Start(viper.GetString("network.host"), viper.GetInt("network.port"), viper.GetString("authentication.username"), viper.GetString("authentication.password"), viper.GetInt("actions.secondsOfActivity"), viper.GetInt("actions.secondsOfInactivity"), viper.GetString("actions.actionLevel"))
 	},
 }
 
@@ -43,7 +45,8 @@ func init() {
 	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "c", "config file (default is ./run.toml)")
 	RootCmd.Flags().StringVarP(&host, "host", "H", "", "Host address to listen to.")
 	RootCmd.Flags().IntVarP(&port, "port", "p", -1, "Port to listen to.")
-
+	RootCmd.Flags().StringVarP(&username, "username", "u", "", "Username to connect with OS")
+	RootCmd.Flags().StringVarP(&password, "secret", "s", "", "Password to connect with OS")
 }
 
 func initConfig() {
@@ -58,14 +61,21 @@ func initConfig() {
 	if err := viper.ReadInConfig(); err != nil {
 		log.Output(1, "No config file found")
 	}
+
 	initStringFlag("host", "network")
 	initIntFlag("port", "network")
+	initStringFlag("username", "authentication")
+	initStringFlag("password", "authentication")
 }
 
 func initDefaults() {
 	viper.SetDefault("network", map[string]interface{}{
 		"host": "localhost",
 		"port": 4200,
+	})
+	viper.SetDefault("authentication", map[string]interface{}{
+		"username": "admin",
+		"password": "admin",
 	})
 	viper.SetDefault("actions", map[string]interface{}{
 		"secondsOfActivity":   60,

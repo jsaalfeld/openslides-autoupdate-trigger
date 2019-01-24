@@ -2,6 +2,10 @@
 host = "127.0.0.1"
 port = 4200
 
+[authentication]
+username = "admin"
+password = "password"
+
 [actions]
 secondsOfActivity = 60
 secondsOfInactivity = 300
