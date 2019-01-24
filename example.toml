@@ -3,7 +3,7 @@ host = "http://127.0.0.1:8000/rest"
 
 [authentication]
 username = "admin"
-password = "password"
+password = "admin"
 
 [actions]
 secondsOfActivity = 60
